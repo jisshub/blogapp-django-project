@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+    {% block content %}
+    <h1>Home Page</h1>
+        <div class="row">
+            <div class="col-md-8">
+                {% if post %}
+                    {% for eachPost in post %}
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{eachPost.post_title}}</h5>
+                            <p class="card-text">{{eachPost.post_content}}</p>
+                            <p class="card-text">{{eachPost.date_posted}}</p>
+                            <p class="card-text">{{eachPost.author}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <p class="lead">No Posts Yet!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endblock %}
+
+
