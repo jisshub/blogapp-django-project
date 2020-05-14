@@ -123,3 +123,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# redirect to home page once login
+LOGIN_REDIRECT_URL = "home"

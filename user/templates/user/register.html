@@ -10,15 +10,22 @@
                 <!-- create a legend -->
                 <h1 class="display-6 border-bottom">
                     Register
-                </h1>
+                </h1>   
                 <!-- crispy forms  -->
                 {{form|crispy}}
             </div>
 
             <div class="form-group">
-                <button class="btn btn-outline-info btn-block">Sign Up</button>
+                <button class="btn btn-outline-info btn-block" type="submit">Sign Up</button>
             </div>
         </form>
+
+        <div class="pt-3">
+            <small class="text-muted">
+                Already Have an Account?
+                <a href="{% url 'login' %}" class="text-info">Login Here</a>
+            </small>
+        </div>
     </div>
 </div>
 {% endblock %}
