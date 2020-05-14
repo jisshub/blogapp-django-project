@@ -11,6 +11,16 @@
                 <h1 class="display-6 border-bottom">
                     Register
                 </h1>
+
+                <!-- show alert messages here -->
+                {% if messages %}
+                <!-- messages -> list -->
+                    {% for msg in messages %}
+                    <div class="alert alert-{{msg.tags}}">
+                        {{msg}}
+                    </div>
+                    {% endfor %}
+                {% endif %}
                 <!-- crispy forms  -->
                 {{form|crispy}}
             </div>

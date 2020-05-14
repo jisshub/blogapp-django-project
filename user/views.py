@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm
+# import message module
+from django.contrib import messages
 # Create your views here.
 
 def register_view(request):
@@ -12,6 +14,8 @@ def register_view(request):
             form.save()
             # fetch username from from
             username = form.cleaned_data.get('username')
+            # flash message if success,
+            messages.success(request, f'Account created for {username}!') 
     else:
         # create form instance if request not post
         form = UserCreationForm()
