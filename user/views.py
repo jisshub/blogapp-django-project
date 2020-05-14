@@ -4,8 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 
 def register_view(request):
     # instance of user creation form incase request is post/not
-    form = UserCreationForm(request.POST)
     if request.method == 'POST':
+        # create form with posted data
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             # save the form
             form.save()
