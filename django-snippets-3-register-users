@@ -297,7 +297,11 @@ urls.py
     path('profile/', views.profile, name="profile")
     
     
-            
+settings.py-
+-----------
+# change default login url -> custom one
+# so whenever v navigate to login/, no errors
+LOGIN_URL = 'login'     
 
 
 
