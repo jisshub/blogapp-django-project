@@ -1,0 +1,274 @@
+User Register
+----------------
+> create new app for users
+
+> user registeartion page
+
+views.py
+-----------
+create a register view
+
+> create  form to be passed to register view 
+
+from  django.contrib.auth.forms im port UserCreatiionForm
+	
+>create insatnce od form
+
+render the form
+
+
+The CSRF token only ensures that only forms that have originated from trusted domains can be used to POST data back.
+
+
+using cripsy form
+--------------------
+
+pip install django-crispy-forms
+
+INSTALLED_APPS = (
+    ...
+    'crispy_forms',
+)
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+{% load crispy_forms_tags %}
+
+<form method="post" class="uniForm">
+    {{ my_formset|crispy }}
+</form>
+
+register.html
+------------------
+{% extends 'blog/base.html' %}
+<!-- load crsipy forms -->
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <!-- create a legend -->
+                <h1 class="display-6 border-bottom">
+                    Register
+                </h1>
+
+                <!-- show alert messages here -->
+                {% if messages %}
+                <!-- messages -> list -->
+                    {% for msg in messages %}
+                    <div class="alert alert-{{msg.tags}}">
+                        {{msg}}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                <!-- crispy forms  -->
+                {{form|crispy}}
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-outline-info btn-block">Sign Up</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+register view.py
+----------------
+def register_view(request):
+    # instance of user creation form incase request is post/not
+    if request.method == 'POST':
+        # create form with posted data
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # save the form
+            form.save()
+            # fetch username from from
+            username = form.cleaned_data.get('username')
+            # flash message if success,
+            messages.success(request, f'Account created for {username}!') 
+    else:
+        # create form instance if request not post
+        form = UserCreationForm()
+    # render the form
+    return render(request, 'user/register.html', {"form": form})
+
+
+
+adding a new field to user creation form
+----------------------------------------
+
+create a python file in user app
+
+
+
+create a new form that  inherigt the usercreationform
+
+forms.py
+--------
+from django import forms
+# import User Model
+from django.contrib.auth.models import User
+# import Usercreationform
+from django.contrib.auth.forms import UserCreationForm
+
+# create a new form that inherits the UserCreationForm
+class RegisterForm(UserCreationForm):
+    # specify the field email
+    email = forms.EmailField(required=True)
+
+    # Specify Meta class to configure the form with the user model.
+    class Meta: 
+        # model to be interacted with form
+        model = User
+        # form fields
+        fields = ['username', 'email', 'password1', 'password2']
+
+
+views.py updated with RegisterForm
+--------------------------------
+from django.shortcuts import render
+# import message module
+from django.contrib import messages
+# import shortcuts here.
+from django.shortcuts import redirect
+# import Register Form
+from .forms import RegisterForm
+
+# Create your views here.
+
+def register_view(request):
+    # instance of user creation form incase request is post/not
+    if request.method == 'POST':
+        # create form with posted data
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            # save the form
+            form.save()
+            # fetch username from from
+            username = form.cleaned_data.get('username')
+            # flash message if success,
+            messages.success(request, f'Account created for {username}!') 
+            return redirect('home')
+    else:
+        # create form instance if request not post
+        form = RegisterForm()
+    # render the form
+    return render(request, 'user/register.html', {"form": form})
+
+
+UserLogin System
+-------------------
+urls.py
+---------
+
+from django.urls import path
+
+# importLoginView and Logout view
+from django.contrib.auth import views as auth_views
+from . import views
+
+urlpatterns = [
+    path('register/', views.register_view, name='register'),
+    # login url
+    path('login/', auth_views.LoginView.as_view(template_name='user/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='user/logout.html'), name='logout'),
+    
+]
+ 
+ 
+ login.html
+ -----------
+ {% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <h3 class="display-5">Login</h3><hr>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {{form|crispy}}
+        </div>
+        <div class="form-group">
+            <button class="btn btn-outline-info btn-block" type="submit">Login</button>
+        </div>
+    </form>
+    <div class="pt-3">
+        <small class="text-muted">
+            Need an Account?
+            <a href="{% url 'register' %}" class="ml-3">Register</a>
+        </small>
+    </div>
+    
+{% endblock %}
+
+
+settings.py
+----------------
+
+# redirect to home page once login
+LOGIN_REDIRECT_URL = "home"
+
+
+views.py
+---------
+//redirect to login page once register
+
+return redirect('login')
+
+
+logout.html
+----------
+<!-- logout template -->
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<button class="btn btn-info"><a href="{% url 'login' %}" style="color: #fff; text-decoration: none;">Login Here</a></button>
+{% endblock %}
+
+
+
+change naviagtion bars based on user login
+-----------------------------------
+
+partial/_navbar.html
+-------------------------
+
+ <!-- if user is logged in -->
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
+                </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link float-left">logout</a>               
+            </li>
+        </ul>
+        <!-- if new user -->
+        {% else %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link float-left" href="{% url 'login' %}">Login</a>        
+                    <a class="nav-link float-right" href="{% url 'register' %}">Register</a> 
+                </li>
+            </ul>
+        {% endif %}
+        
+        
+        
+
+
+
+
+
