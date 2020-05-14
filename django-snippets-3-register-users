@@ -267,6 +267,37 @@ partial/_navbar.html
         
         
         
+create user profile page
+------------------------
+profile.html
+--------------
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<!-- here user is currenlty logged in user. no need to pass it to context in view -->
+    <h1>{{user.username}}</h1>
+{% endblock %}
+
+
+views.py
+----------
+# user profile page
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile(request):
+    return render(request, 'user/profile.html')
+
+
+@login_required ensure user to login before accessing profile page
+
+urls.py
+-----------
+ # navigate to user profiles
+    path('profile/', views.profile, name="profile")
+    
+    
+            
 
 
 

@@ -128,3 +128,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # redirect to home page once login
 LOGIN_REDIRECT_URL = "home"
+
+# change default login url -> custom one
+# so whenever v navigate to login/, no errors
+LOGIN_URL = 'login'
+

@@ -1,0 +1,6 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<!-- here user is currenlty logged in user. no need to pass it to context in view -->
+    <h1>{{user.username}}</h1>
+{% endblock %}
